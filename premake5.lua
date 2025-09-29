@@ -22,6 +22,7 @@ project "TextureConverter"
 
     includedirs {
         "$(SolutionDir).",
+        "$(SolutionDir)code",
     }
 
     filter "configurations:Debug"
