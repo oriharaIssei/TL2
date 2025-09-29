@@ -20,7 +20,7 @@ void TextureConverter::LoadWICTextureFromFile(const std::string& _filePath) {
     std::wstring wFilePath = ConvertMultiByteToWide(_filePath);
 
     /// ==================================================================
-    // 1. WICテクスチャの読み込み
+    // WICテクスチャの読み込み
     /// ==================================================================
     result = DirectX::LoadFromWICFile(wFilePath.c_str(), DirectX::WIC_FLAGS_NONE, &metadata_, scratchImage_);
     if (FAILED(result)) {
@@ -28,16 +28,53 @@ void TextureConverter::LoadWICTextureFromFile(const std::string& _filePath) {
         return;
     }
     SeparateFilePath(wFilePath, directory_, filename_, extension_);
-
-    /// ==================================================================
-    // 2. 読み込んだディフーズテクスチャを SRGBとして扱う
-    /// ==================================================================
-    metadata_.format = DirectX::MakeSRGB(metadata_.format);
 }
 
 void TextureConverter::SaveDDSTextureToFile() {
     HRESULT result = S_OK;
 
+    /// ==================================================================
+    // mipMapの生成
+    /// ==================================================================
+    DirectX::ScratchImage mipChain;
+    result = DirectX::GenerateMipMaps(
+        scratchImage_.GetImages(),
+        scratchImage_.GetImageCount(),
+        scratchImage_.GetMetadata(),
+        DirectX::TEX_FILTER_DEFAULT,
+        0,
+        mipChain);
+
+    if (SUCCEEDED(result)) {
+        scratchImage_ = std::move(mipChain); // コピーは禁止なのでムーブ
+        metadata_     = scratchImage_.GetMetadata();
+    }
+    /// ==================================================================
+    // 圧縮テクスチャへの変換
+    /// ==================================================================
+    DirectX::ScratchImage converted;
+    result = DirectX::Compress(
+        scratchImage_.GetImages(),
+        scratchImage_.GetImageCount(),
+        metadata_,
+        DXGI_FORMAT_BC7_UNORM_SRGB,
+        DirectX::TEX_COMPRESS_BC7_QUICK | DirectX::TEX_COMPRESS_SRGB_OUT | DirectX::TEX_COMPRESS_PARALLEL,
+        1.f,
+        converted);
+
+    if (SUCCEEDED(result)) {
+        scratchImage_ = std::move(converted); // コピーは禁止なのでムーブ
+        metadata_     = scratchImage_.GetMetadata();
+    }
+
+    /// ==================================================================
+    // 読み込んだディフーズテクスチャを SRGBとして扱う
+    /// ==================================================================
+    metadata_.format = DirectX::MakeSRGB(metadata_.format);
+
+    /// ==================================================================
+    // DDS テクスチャの保存
+    /// ==================================================================
     result = DirectX::SaveToDDSFile(
         scratchImage_.GetImages(),
         scratchImage_.GetImageCount(),
