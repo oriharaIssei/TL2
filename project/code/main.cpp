@@ -1,11 +1,10 @@
-
 #include <cstdio>
 #include <cstdlib>
 
 int main() {
     std::printf("Hello, World!\n");
 
-	system("pause");
+    system("pause");
 
-	return 0;
+    return 0;
 }
