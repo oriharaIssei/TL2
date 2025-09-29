@@ -23,10 +23,6 @@ static void ComInitialize() {
 }
 
 int main(int argc, char* argv[]) {
-   
-    assert(argc >= ARG_NUM);
-
-    ComInitialize();
 
     TextureConverter converter;
 
