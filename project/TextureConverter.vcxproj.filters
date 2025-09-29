@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="code">
+      <UniqueIdentifier>{803E957C-6C75-960D-1562-7C100178120F}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="code\TextureConverter.h" />
+    <ClInclude Include="code\StringUtil.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="code\TextureConverter.cpp" />
+    <ClCompile Include="code\main.cpp">
+      <Filter>code</Filter>
+    </ClCompile>
+    <ClCompile Include="code\StringUtil.cpp" />
+  </ItemGroup>
+</Project>
