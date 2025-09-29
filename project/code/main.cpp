@@ -1,8 +1,13 @@
 #include <cstdio>
 #include <cstdlib>
 
-int main() {
-    std::printf("Hello, World!\n");
+#include <cstdint>
+
+int main(int argc, char* argv[]) {
+    for (int32_t i = 0; i < argc; ++i) {
+        printf(argv[i]);
+        printf("\n");
+    }
 
     system("pause");
 
