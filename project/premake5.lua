@@ -65,11 +65,7 @@ project "DirectXTex"
         cppdialect "C++20"
         systemversion "latest"
     filter "configurations:Debug"
-         runtime "Debug"       -- Debug ランタイム (MTd) を使用
-         symbols "On"
-         staticruntime "On"
-     filter "configurations:Develop"
-        runtime "Release" -- 開発用のリリースビルド
+        runtime "Debug"       -- Debug ランタイム (MTd) を使用
         symbols "On"
         staticruntime "On"
     filter "configurations:Release"
