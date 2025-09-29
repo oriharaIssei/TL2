@@ -399,3 +399,5 @@ FodyWeavers.xsd
 /project/x64/Release
 /project/OriGineApplication
 /project/engine/resource/logs
+*.sln
+*.vcxproj
