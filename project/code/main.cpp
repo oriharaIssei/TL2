@@ -8,12 +8,12 @@
 /// local
 #include "TextureConverter.h"
 
-///math
+/// math
 #include <cstdint>
 
 enum ArgmentIndex {
     ARG_APPLICATION_PATH,
-    ARK_FILE_PATH,
+    ARG_FILE_PATH,
     ARG_NUM
 };
 
@@ -29,7 +29,19 @@ int main(int argc, char* argv[]) {
     ComInitialize();
 
     TextureConverter converter;
-    converter.ConvertTextureWICToDDS(argv[ARK_FILE_PATH]);
+
+    // コマンドラインに引数が足りない場合は使用方法を出力して終了
+    if (argc < ARG_NUM) {
+        converter.OutputUsage();
+        return 0;
+    }
+
+    // COMライブラリの初期化
+    ComInitialize();
+    // WICテクスチャをDDS形式に変換
+    int numOptions = argc - ARG_NUM;
+    char** options = argv + ARG_NUM;
+    converter.ConvertTextureWICToDDS(argv[ARG_FILE_PATH], numOptions,options);
 
     return 0;
 }
