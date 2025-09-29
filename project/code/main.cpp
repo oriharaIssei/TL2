@@ -31,7 +31,5 @@ int main(int argc, char* argv[]) {
     TextureConverter converter;
     converter.ConvertTextureWICToDDS(argv[ARK_FILE_PATH]);
 
-    system("pause");
-
     return 0;
 }
