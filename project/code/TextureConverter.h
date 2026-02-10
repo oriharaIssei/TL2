@@ -15,7 +15,8 @@ public:
     /// <summary>
     /// 使用方法を出力する
     /// </summary>
-    void OutputUsage()const;
+    void OutputUsage() const;
+
 private:
     /// <summary>
     /// WICテクスチャをファイルから読み込む
@@ -31,6 +32,8 @@ private:
     std::wstring directory_;
     std::wstring filename_;
     std::wstring extension_;
+
+    std::filesystem::path outPath_;
 
     DirectX::TexMetadata metadata_;
     DirectX::ScratchImage scratchImage_;

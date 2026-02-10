@@ -1,5 +1,10 @@
 #include "TextureConverter.h"
 
+/// stl
+#include <filesystem>
+#include <windows.h>
+
+/// local
 #include "StringUtil.h"
 
 void TextureConverter::ConvertTextureWICToDDS(const std::string& _filePath, int32_t numOptions, char* options[]) {
@@ -15,13 +20,18 @@ void TextureConverter::ConvertTextureWICToDDS(const std::string& _filePath, int3
 }
 
 void TextureConverter::OutputUsage() const {
+    // コンソールのコードページをUTF-8(65001)に設定
+    system("chcp 65001");
+
     printf("画像ファイルをWIC形式からDDS形式に変換します。\n");
     printf("\n");
     printf("TextureConverter [ドライブ:][パス][ファイル名] \n");
     printf("\n");
     printf("[ドライブ:][パス][ファイル名]: 変換したいWIC形式の画像ファイルを指定します｡\n");
     printf("\n");
+    printf("オプション:\n");
     printf("-ml [ミップレベル]: ミップレベルを指定します｡ 0を指定するとフルミップマップチェーンを生成します｡\n");
+    printf("-output or -o [出力先]: 指定されたpathに出力されます。(ファイル名まで指定する事ができます。)\n");
 }
 
 void TextureConverter::LoadWICTextureFromFile(const std::string& _filePath) {
@@ -38,6 +48,10 @@ void TextureConverter::LoadWICTextureFromFile(const std::string& _filePath) {
         return;
     }
     SeparateFilePath(wFilePath, directory_, filename_, extension_);
+
+    // out ファイル名とディレクトリを初期化
+    outDirectory_ = directory_;
+    outFilename_  = filename_;
 }
 
 void TextureConverter::SaveDDSTextureToFile(int32_t numOptions, char* options[]) {
@@ -52,6 +66,15 @@ void TextureConverter::SaveDDSTextureToFile(int32_t numOptions, char* options[])
         if (optionStr == "-ml") {
             mipLevels = std::stoi(options[i + 1]);
             break;
+        } else if (optionStr == "-output" || optionStr == "-o") {
+            // 出力ファイル名の指定
+            std::filesystem::path outputPath = options[i + 1];
+            if (outputPath.has_parent_path()) {
+                outDirectory_ = ConvertMultiByteToWide(outputPath.parent_path().string());
+            }
+            if (outputPath.has_filename()) {
+                outFilename_ = ConvertMultiByteToWide(outputPath.stem().string());
+            }
         } else {
             printf("不明なオプションです: %s\n", options[i]);
             OutputUsage();
@@ -106,7 +129,7 @@ void TextureConverter::SaveDDSTextureToFile(int32_t numOptions, char* options[])
         scratchImage_.GetImageCount(),
         metadata_,
         DirectX::DDS_FLAGS_NONE,
-        (directory_ + filename_ + L".dds").c_str());
+        (outDirectory_ + outFilename_ + L".dds").c_str());
 
     assert(SUCCEEDED(result) && "Failed to save DDS texture to file.");
 }
